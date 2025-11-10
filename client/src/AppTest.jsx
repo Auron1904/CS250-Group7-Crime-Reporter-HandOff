@@ -2,72 +2,47 @@ import { useEffect, useRef, useState } from "react";
 import "./Styles/App.css";
 import MapTest from "./MapTest.jsx";
 import CreateReportTest from "./CreateReportTest.jsx";
-import Filter from "./Filter.jsx"; // keep original filters
+import Filter from "./Filter.jsx";
 import AuthModal from "./LoginSignUp.jsx";
 
 export default function AppTest() {
-    const [pinPlacementMode, setPinPlacementMode] = useState(false);
-    const [reports, setReports] = useState([]); // all saved reports
-    const [activeReport, setActiveReport] = useState(null); // report being created
-    const [viewReport, setViewReport] = useState(null); // report being viewed read-only
+    // Reports state (for map pins)
+    const [reports, setReports] = useState([]);
+    const [viewReport, setViewReport] = useState(null);
 
-    // 'Create Report' pop-up
-    const [showModal, setShowModal] = useState(false);
-    // Login pop-up
+    // Modal states
+    const [showCreateModal, setShowCreateModal] = useState(false);  // NEW
     const [authOpen, setAuthOpen] = useState(false);
 
-    // Close on ESC
+    // Close modals on ESC
     useEffect(() => {
         function onKey(e) {
-            if (e.key === "Escape") setShowModal(false);
+            if (e.key === "Escape") {
+                setShowCreateModal(false);
+                setAuthOpen(false);
+            }
         }
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
     }, []);
 
-    // Close if clicking the dark backdrop (but not the rectangle itself)
-    const backdropRef = useRef(null);
-    function onBackdropClick(e) {
-        if (e.target === backdropRef.current) setShowModal(false);
-    }
-
-
-    const handleCancelReport = (reportId) => {
-        setReports((prev) => prev.filter(r => r.id !== reportId));
-        setActiveReport(null);
-    }
-
-    // Start creating a new report
-    const startCreateReport = () => {
-        setPinPlacementMode(true);
-    };
-
-    // When user clicks map to place a new pin
-    const handleMapClick = (position) => {
-        if (!pinPlacementMode) return;
-
+    // Handle saving a new report
+    const handleSaveReport = (reportId, formData) => {
+        console.log('Report saved:', { reportId, formData });
+        
+        // Create new report object
         const newReport = {
             id: Date.now(),
-            position,
-            formData: null,
+            position: { lat: 32.7764, lng: -117.0719 }, // Default SDSU center
+            formData: formData
         };
-
+        
         setReports((prev) => [...prev, newReport]);
-        setActiveReport(newReport); // open modal for this pin
-        setPinPlacementMode(false);
+        setShowCreateModal(false);
+        alert('✅ Report created successfully!');
     };
 
-    // Save a new report
-    const handleSaveReport = (reportId, formData) => {
-        setReports((prev) =>
-            prev.map((r) =>
-                r.id === reportId ? { ...r, formData } : r
-            )
-        );
-        setActiveReport(null); // close modal
-    };
-
-    // View a saved report
+    // View an existing report
     const handleViewReport = (report) => {
         setViewReport(report);
     };
@@ -85,7 +60,13 @@ export default function AppTest() {
                 <div className="card filtersCard">
                     <Filter />
                 </div>
-                <button className="createBtn" onClick={startCreateReport}>
+                <button 
+                    className="createBtn" 
+                    onClick={() => {
+                        console.log('Opening create report modal');
+                        setShowCreateModal(true);  // ← CHANGED!
+                    }}
+                >
                     Create Report
                 </button>
             </nav>
@@ -94,63 +75,62 @@ export default function AppTest() {
             <main className="content">
                 <section className="leftCol">
                     <div className="card reportCard">
-                        <h2>REPORT</h2>
-                        {reports.length === 0 && <p>No reports yet.</p>}
+                        <h2>REPORTS</h2>
+                        {reports.length === 0 && <p>No reports yet. Click "Create Report" to add one!</p>}
                         {reports.map((r) => (
-                            <div key={r.id} className="reportField">
-                                <strong>Location:</strong>
-                                <span>{r.position.lat.toFixed(5)}, {r.position.lng.toFixed(5)}</span>
+                            <div 
+                                key={r.id} 
+                                className="reportField"
+                                style={{ cursor: 'pointer', padding: '10px', borderBottom: '1px solid #ddd' }}
+                                onClick={() => handleViewReport(r)}
+                            >
+                                <strong>Report #{r.id}</strong>
+                                {r.formData && (
+                                    <>
+                                        <p><strong>Type:</strong> {r.formData.incidentType?.join(', ')}</p>
+                                        <p><strong>Date:</strong> {r.formData.date}</p>
+                                    </>
+                                )}
                             </div>
                         ))}
-                        <div className="reportField">
-                            <strong>Date of Incident:</strong>
-                            <span>MM/DD/YYYY</span>
-                        </div>
-
-                        <div className="reportField">
-                            <strong>Time:</strong>
-                            <span>00:00 AM/PM</span>
-                        </div>
-
-                        <div className="reportField">
-                            <strong>Type of Incident:</strong>
-                            <span>–</span>
-                        </div>
-
-                        <div className="reportField">
-                            <strong>Description of Incident:</strong>
-                            <p className="reportDescription">No description yet.</p>
-                        </div>
                     </div>
                 </section>
 
                 <section className="mapPanel">
                     <MapTest
                         reports={reports}
-                        onMapClick={handleMapClick}
-                        onMarkerClick={handleViewReport} // now view only
+                        onMapClick={() => {}} // Disabled for now
+                        onMarkerClick={handleViewReport}
                     />
                 </section>
-                {/* Modal for creating/editing a report */}
-                {activeReport && (
-                    <CreateReportTest
-                        report={activeReport}
-                        onSave={handleSaveReport}
-                        onClose={() => handleCancelReport(activeReport.id)}
-                        readOnly={false}
-                    />
-                )}
-
-                {/* Modal for viewing a saved report */}
-                {viewReport && viewReport.formData && (
-                    <CreateReportTest
-                        report={viewReport}
-                        onClose={() => setViewReport(null)}
-                        readOnly={true}
-                    />
-                )}
             </main>
-            <AuthModal open={ authOpen } onClose={() => setAuthOpen(false)} />
+
+            {/* Modal for creating a report */}
+            {showCreateModal && (
+                <CreateReportTest
+                    report={{ 
+                        id: Date.now(), 
+                        formData: null,
+                        lat: 32.7764,
+                        lng: -117.0719
+                    }}
+                    onSave={handleSaveReport}
+                    onClose={() => setShowCreateModal(false)}
+                    readOnly={false}
+                />
+            )}
+
+            {/* Modal for viewing a saved report */}
+            {viewReport && viewReport.formData && (
+                <CreateReportTest
+                    report={viewReport}
+                    onClose={() => setViewReport(null)}
+                    readOnly={true}
+                />
+            )}
+
+            {/* Auth Modal */}
+            <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
         </div>
     );
 }
