@@ -1,10 +1,26 @@
 import "./Styles/Modal.css";
 import "./Styles/ReportCard.css";
 import React, { useState, useEffect } from "react";
+const date = { today: new Date().toISOString().split("T")[0] };
+const minDate = new Date(Date.now() - 365*24*60*60*1000).toISOString().split("T")[0]; // 1 year ago
 
+
+
+function checkDateInRange(selectedDate) {
+         // validate date range
+        if (!selectedDate) {
+        alert(`⚠️ Please select a date between ${minDate} and ${date.today}.`);
+        return false;
+    }
+    if (selectedDate < minDate || selectedDate > date.today) {
+        alert(`⚠️ Date must be between ${minDate} and ${date.today}.`);
+        return false;
+    }
+    return true;
+}
 function CreateReportTest({ report, onSave, onClose, readOnly }) {
     const [formData, setFormData] = useState(report.formData || {
-        date: "",
+        date: date.today,  // starts with today for convenience and forces the date range input to not start at min( a year ago )
         time: "",
         ampm: "AM",
         yourAge: "",
@@ -15,6 +31,7 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
         incidentType: [],
         description: ""
     });
+
 
     useEffect(() => {
         if (report.formData) setFormData(report.formData);
@@ -41,6 +58,8 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
     };
 
     const handleSave = () => {
+
+        if (!checkDateInRange(formData.date)) return;
         if (readOnly) return;
 
         const requiredFields = [
@@ -88,6 +107,8 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                 id="date"
                                 type="date"
                                 className="input"
+                                min={minDate}
+                                max={date.today}
                                 value={formData.date}
                                 onChange={handleChange}
                                 readOnly={readOnly}
