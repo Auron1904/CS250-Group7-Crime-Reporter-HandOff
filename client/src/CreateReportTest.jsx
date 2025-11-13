@@ -7,7 +7,8 @@ const minDate = new Date(Date.now() - 365*24*60*60*1000).toISOString().split("T"
 
 
 function checkDateInRange(selectedDate) {
-         // validate date range
+         // validate date range 
+         
         if (!selectedDate) {
         alert(`⚠️ Please select a date between ${minDate} and ${date.today}.`);
         return false;
