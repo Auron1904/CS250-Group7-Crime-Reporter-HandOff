@@ -9,8 +9,6 @@ const minDate = new Date(Date.now() - 365*24*60*60*1000).toISOString().split("T"
 function checkDateInRange(selectedDate) {
          // validate date range 
     
-         
-
         if (!selectedDate) {
         alert(`⚠️ Please select a date between ${minDate} and ${date.today}.`);
         return false;
@@ -20,6 +18,14 @@ function checkDateInRange(selectedDate) {
         return false;
     }
     return true;
+}
+function checkAge(age) {
+    const ageNum = Number(age);
+    if (isNaN(ageNum) || ageNum < 0 || ageNum > 120) {
+        alert("⚠️ Please enter a valid age between 0 and 120.");
+        return false;
+    }
+    return true;    
 }
 function CreateReportTest({ report, onSave, onClose, readOnly }) {
     const [formData, setFormData] = useState(report.formData || {
@@ -63,6 +69,9 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
     const handleSave = () => {
 
         if (!checkDateInRange(formData.date)) return;
+        if (!checkAge(formData.yourAge)) return;
+        if (formData.personAge && !checkAge(formData.personAge)) return;
+
         if (readOnly) return;
 
         const requiredFields = [
@@ -129,6 +138,7 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                     onChange={handleChange}
                                     readOnly={readOnly}
                                 />
+                               
                                 <div className="segmented" role="radiogroup" aria-label="AM or PM">
                                     {["AM","PM"].map(v => (
                                         <label key={v} className="segmentedItem">
@@ -230,7 +240,28 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                         <div className="field full">
                             <label>Type of Incident</label>
                             <div className="checksRow">
-                                {["Theft","Vandalism","Assault","Disturbance","Other"].map(v => (
+                                {[
+                                    "Theft",
+                                    "Vandalism",
+                                    "Aggravated Assault",
+                                    "Disturbance",
+                                    "Illegal Gambling",
+                                    "Public Intoxication",
+                                    "Drug Possession",
+                                    "Underage Drinking",
+                                    "Drug-Trafficking",
+                                    "Extortion",
+                                    "Racketeering",
+                                    "Sexual Assault",
+                                    "Murder",
+                                    "Manslaughter",
+                                    "Motor-Theft",
+                                    "Larceny-Theft",
+                                    "Arson",
+                                    "Burglary",
+                                    "Public Indecency",
+                                    "Other"
+                                ].map((v) => (
                                     <label key={v} className="check">
                                         <input
                                             type="checkbox"
@@ -244,8 +275,6 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                 ))}
                             </div>
                         </div>
-
-                        {/* Description */}
                         <div className="field full">
                             <label htmlFor="description">Description of Incident</label>
                             <textarea
