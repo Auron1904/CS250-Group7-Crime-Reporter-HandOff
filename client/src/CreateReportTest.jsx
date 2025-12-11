@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 const date = { today: new Date().toISOString().split("T")[0] };
 const minDate = new Date(Date.now() - 365*24*60*60*1000).toISOString().split("T")[0]; // 1 year ago
 
+const today = new Date().toLocaleDateString('en-CA'); // returns YYYY-MM-DD format
 
 
 function checkDateInRange(selectedDate) {
@@ -20,7 +21,7 @@ function checkDateInRange(selectedDate) {
 }
 function CreateReportTest({ report, onSave, onClose, readOnly }) {
     const [formData, setFormData] = useState(report.formData || {
-        date: date.today,  // starts with today for convenience and forces the date range input to not start at min( a year ago )
+        date: today,  // starts with today for convenience and forces the date range input to not start at min( a year ago )
         time: "",
         ampm: "AM",
         yourAge: "",
