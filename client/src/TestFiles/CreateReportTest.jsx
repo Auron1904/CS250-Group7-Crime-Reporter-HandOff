@@ -1,10 +1,35 @@
 import "../Styles/Modal.css";
 import "../Styles/ReportCard.css";
 import React, { useState, useEffect } from "react";
+const date = { today: new Date().toISOString().split("T")[0] };
+const minDate = new Date(Date.now() - 365*24*60*60*1000).toISOString().split("T")[0]; // 1 year ago
 
+
+
+function checkDateInRange(selectedDate) {
+         // validate date range 
+    
+        if (!selectedDate) {
+        alert(`⚠️ Please select a date between ${minDate} and ${date.today}.`);
+        return false;
+    }
+    if (selectedDate < minDate || selectedDate > date.today) {
+        alert(`⚠️ Date must be between ${minDate} and ${date.today}.`);
+        return false;
+    }
+    return true;
+}
+function checkAge(age) {
+    const ageNum = Number(age);
+    if (isNaN(ageNum) || ageNum < 0 || ageNum > 120) {
+        alert("⚠️ Please enter a valid age between 0 and 120.");
+        return false;
+    }
+    return true;    
+}
 function CreateReportTest({ report, onSave, onClose, readOnly }) {
     const [formData, setFormData] = useState(report.formData || {
-        date: "",
+        date: date.today,  // starts with today for convenience and forces the date range input to not start at min( a year ago )
         time: "",
         ampm: "AM",
         yourAge: "",
@@ -15,6 +40,7 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
         incidentType: [],
         description: ""
     });
+
 
     useEffect(() => {
         if (report.formData) setFormData(report.formData);
@@ -41,7 +67,32 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
     };
 
     const handleSave = () => {
-        if (!readOnly) onSave(report.id, formData);
+
+        if (!checkDateInRange(formData.date)) return;
+        if (!checkAge(formData.yourAge)) return;
+        if (formData.personAge && !checkAge(formData.personAge)) return;
+
+        if (readOnly) return;
+
+        const requiredFields = [
+            "date",
+            "time",
+            "yourAge",
+            "yourGender",
+            "personAge",
+            "personGender",
+            "description",
+        ];
+
+        const emptyField = requiredFields.find(field=>!formData[field] || formData[field].trim() === "");
+        const noIncidentType = formData.incidentType.length === 0;
+
+        if (emptyField || noIncidentType) {
+            alert("⚠️Please fill in all required fields and select at least one incident type before saving.");
+            return;
+        }
+
+        onSave(report.id, formData);
     };
 
     return (
@@ -68,9 +119,11 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                 id="date"
                                 type="date"
                                 className="input"
-                                value={ formData.date }
-                                onChange={ handleChange }
-                                readOnly={ readOnly }
+                                min={minDate}
+                                max={date.today}
+                                value={formData.date}
+                                onChange={handleChange}
+                                readOnly={readOnly}
                             />
                         </div>
 
@@ -85,6 +138,7 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                     onChange={ handleChange }
                                     readOnly={ readOnly }
                                 />
+                               
                                 <div className="segmented" role="radiogroup" aria-label="AM or PM">
                                     {["AM","PM"].map(v => (
                                         <label key={ v } className="segmentedItem">
@@ -186,8 +240,29 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                         <div className="field full">
                             <label>Type of Incident</label>
                             <div className="checksRow">
-                                {["Theft","Vandalism","Assault","Disturbance","Other"].map(v => (
-                                    <label key={ v } className="check">
+                                {[
+                                    "Theft",
+                                    "Vandalism",
+                                    "Aggravated Assault",
+                                    "Disturbance",
+                                    "Illegal Gambling",
+                                    "Public Intoxication",
+                                    "Drug Possession",
+                                    "Underage Drinking",
+                                    "Drug-Trafficking",
+                                    "Extortion",
+                                    "Racketeering",
+                                    "Sexual Assault",
+                                    "Murder",
+                                    "Manslaughter",
+                                    "Motor-Theft",
+                                    "Larceny-Theft",
+                                    "Arson",
+                                    "Burglary",
+                                    "Public Indecency",
+                                    "Other"
+                                ].map((v) => (
+                                    <label key={v} className="check">
                                         <input
                                             type="checkbox"
                                             value={ v }
@@ -200,8 +275,6 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                 ))}
                             </div>
                         </div>
-
-                        {/* Description */}
                         <div className="field full">
                             <label htmlFor="description">Description of Incident</label>
                             <textarea
@@ -225,11 +298,13 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                 >
                                     Cancel
                                 </button>
+
                                 <button
                                     type="button"
                                     className="btn primary"
                                     onClick={ handleSave }
                                 >
+
                                     Save
                                 </button>
                             </div>

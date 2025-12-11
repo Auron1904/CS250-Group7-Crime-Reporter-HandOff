@@ -37,7 +37,8 @@ function Report({ showModal, setShowModal, backdropRef, onBackdropClick }) {
                         <div className="field">
                             <label htmlFor="time">Time</label>
                             <div className="timeRow">
-                                <input id="time" type="time" className="input" />
+                                <input id="time" type="text" className="input" />
+                                <input id="time" type="text" className="input" />
                                 <div className="segmented" role="radiogroup" aria-label="AM or PM">
                                     <label className="segmentedItem">
                                         <input type="radio" name="ampm" value="AM" defaultChecked />
@@ -96,14 +97,27 @@ function Report({ showModal, setShowModal, backdropRef, onBackdropClick }) {
                         <div className="field full">
                             <label>Type of Incident</label>
                             <div className="checksRow">
-                                <label className="check"><input type="checkbox" /> <span>Arson</span></label>
-                                <label className="check"><input type="checkbox" /> <span>Assault</span></label>
-                                <label className="check"><input type="checkbox" /> <span>Burglary</span></label>
-                                <label className="check"><input type="checkbox" /> <span>Extortion</span></label>
-                                <label className="check"><input type="checkbox" /> <span>Murder</span></label>
-                                <label className="check"><input type="checkbox" /> <span>Indecency</span></label>
                                 <label className="check"><input type="checkbox" /> <span>Theft</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Vandalism</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Aggrevated Assault</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Disturbance</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Illegal Gambling</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Public Intoxication</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Drug Possession</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Underage Drinking</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Drug-Trafficking</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Extortion</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Racketeering</span></label>
                                 <label className="check"><input type="checkbox" /> <span>Other</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Sexual Assault</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Murder</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Manslaughter</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Motor-Theft</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Larceny-Theft</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Arson</span></label>
+                                <label className="check"><input type="checkbox" /> <span>Burglry</span></label>
+
+
                             </div>
                         </div>
 

@@ -1,5 +1,6 @@
 import './Styles/LoginSignUp.css';
 import { useState } from "react";
+import { authAPI, tokenManager } from './services/authApi'
 
 /*Login page & Sign up page */
 function AuthModal({ open, onClose }) {
@@ -31,16 +32,63 @@ function AuthModal({ open, onClose }) {
         [e.target.name]: e.target.value
     });
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        if (mode === 'signup' && form.password !== form.confirm) {
-            alert('Passwords do not match');
-            return;
-        }
-
-        console.log('Submitted:', form);
-        onClose();
-    };
+const onSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    if (mode === 'login') {
+      // ========== LOGIN ==========
+      const response = await authAPI.login({
+        redID: form.redId,
+        password: form.password
+      });
+      
+      // Save token and user info in browser
+      tokenManager.setToken(response.token);
+      tokenManager.setUser({
+        redID: response.redID,
+        firstName: response.firstName,
+        lastName: response.lastName,
+        email: response.email
+      });
+      
+      alert(`Welcome back, ${response.firstName}!`);
+      onClose();
+      
+    } else {
+      // ========== SIGNUP ==========
+      
+      // Check passwords match
+      if (form.password !== form.confirm) {
+        alert('Passwords do not match');
+        return;
+      }
+      
+      // Call backend to register
+      const response = await authAPI.signup({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        sdsuEmail: form.email,
+        redID: form.redId,
+        password: form.password,
+      });
+      
+      // Save token and user info in browser
+      tokenManager.setToken(response.token);
+      tokenManager.setUser({
+        redID: response.redID,
+        firstName: response.firstName,
+        lastName: response.lastName,
+        email: response.email
+      });
+      
+      alert(`Registration successful! Welcome, ${response.firstName}!`);
+      onClose();
+    }
+  } catch (error) {
+    alert(error.message || 'Authentication failed');
+  }
+};
 
     const userClose = (e) => {
         e.preventDefault();
