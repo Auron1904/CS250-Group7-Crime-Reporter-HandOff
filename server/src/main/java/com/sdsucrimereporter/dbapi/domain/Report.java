@@ -1,17 +1,14 @@
 package com.sdsucrimereporter.dbapi.domain;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,27 +22,45 @@ public class Report {
     @UuidGenerator
     @Column(name = "id", unique = true, updatable = false)
     private String reportId;
-    private String location;
-    private String incident;
+
+    // Link to the user who created this report
+    @Column(name = "reporter_id", nullable = false)
     private String reporterId;
-    private String time;
-    private String AMPM;
+
+    // Date and time
     private String date;
-    private String personInvolvedAGE1;
-    private String personInvolvedGENDER1;
-    private String personInvolvedAGE2;
-    private String personInvolvedGENDER2;
+    private String time;
+    private String ampm;
+
+    // Reporter info
+    private String yourAge;
+    private String yourGender;
+
+    // Person involved
+    private String personName;
+    private String personAge;
+    private String personGender;
+
+    // Incident details
+    @Column(length = 1000)
+    private String incidentType; // Store as comma-separated: "Theft,Assault"
+
+    @Column(length = 2000)
     private String description;
-    private String photoUrl;
+
+    // Location
     private String cordLat;
     private String cordLng;
 
-    public String getReportId() {
-        return reportId;
-    }
+    // Optional photo
+    private String photoUrl;
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
+    // Metadata
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

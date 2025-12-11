@@ -4,6 +4,7 @@ import com.sdsucrimereporter.dbapi.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,34 +25,47 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        // DISABLE SPRING CSRF TOKENS
         http
+                // DISABLE CSRF
                 .csrf(csrf -> csrf.disable())
-                // SET STATELESS REQUESTS
-                .sessionManagement(session -> session.sessionCreationPolicy((SessionCreationPolicy.STATELESS)))
-                // AUTHORIZATION RULES: WHO CAN DO WHAT OPERATIONS
-                .authorizeHttpRequests(auth -> auth
-                        // PUBLIC OPS
-                        .requestMatchers("api/auth/**").permitAll() // SIGNUP & LOGIN
-                        .requestMatchers("api/reports").permitAll() // GET ALL REPORTS
-                        .requestMatchers("api/reports/{id}").permitAll() // GET A REPORT
-                        .requestMatchers("api/reports/image/**").permitAll() // GET REPORT IMAGES
 
-                        // PRIVATE OPS -- NEED TO USE AUTHENTICATION TOKENS
+                // STATELESS SESSIONS
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // AUTHORIZATION RULES
+                .authorizeHttpRequests(auth -> auth
+                        // ALLOW OPTIONS REQUESTS (CORS PREFLIGHT) - THIS IS THE KEY FIX!
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // PUBLIC ENDPOINTS
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reports").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reports/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reports/image/**").permitAll()
+
+                        // Legacy endpoints
+                        .requestMatchers(HttpMethod.GET, "/reports").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/reports/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/reports/image/**").permitAll()
+
+                        // AUTHENTICATED ENDPOINTS
+                        .requestMatchers("/api/reports/**").authenticated()
+                        .requestMatchers("/reports/**").authenticated()
+
+                        // Default
                         .anyRequest().authenticated());
 
+        // Add JWT filter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // PASSWORD ENCODER -- ONE-WAY ENCRYPTION
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // AUTH MANAGER
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

@@ -18,12 +18,10 @@ import static com.sdsucrimereporter.dbapi.constant.Constant.PHOTO_DIRECTORY;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
-
 @RestController
-@RequestMapping("/reports")
+@RequestMapping("legacy/reports")
 @RequiredArgsConstructor
 public class Resource {
-
 
     private final sdsuService service;
 
@@ -34,7 +32,7 @@ public class Resource {
 
     @GetMapping
     public ResponseEntity<Page<Report>> getReports(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         return ResponseEntity.ok().body(service.getAllReports(page, size));
     }
 
@@ -44,7 +42,8 @@ public class Resource {
     }
 
     @PutMapping("/photo")
-    public ResponseEntity<String> uploadPhotoReport(@RequestParam("id") String id, @RequestParam("file")MultipartFile file) {
+    public ResponseEntity<String> uploadPhotoReport(@RequestParam("id") String id,
+            @RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok().body(service.uploadPhotoReport(id, file));
     }
 
