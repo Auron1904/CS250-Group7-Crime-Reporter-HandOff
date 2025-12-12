@@ -1,6 +1,9 @@
 com\sdsucrimereporter\dbapi\repo\ReportRepo.class
 com\sdsucrimereporter\dbapi\resource\Resource.class
+com\sdsucrimereporter\dbapi\resource\ReportController.class
 com\sdsucrimereporter\dbapi\service\AuthService.class
+com\sdsucrimereporter\dbapi\resource\AuthController.class
+com\sdsucrimereporter\dbapi\service\ReportService.class
 com\sdsucrimereporter\dbapi\Application.class
 com\sdsucrimereporter\dbapi\service\sdsuService.class
 com\sdsucrimereporter\dbapi\dto\LoginRequest.class
