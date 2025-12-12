@@ -6,6 +6,8 @@ import Filter from "./Filter.jsx";
 import AuthModal from "./LoginSignUp.jsx";
 import { reportAPI } from './services/reportApi';
 import { tokenManager } from './services/authApi';
+import { checkAndAlertThreshold, getCreditUsage, recordApiUsage } from "./services/apiCreditTracker.js";
+
 
 export default function AppTest() {
     // Reports state (for map pins)
@@ -42,6 +44,12 @@ export default function AppTest() {
         }
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
+    }, []);
+
+    // Check API credit status on app load
+    useEffect(() => {
+        const usage = getCreditUsage();
+        checkAndAlertThreshold(usage);
     }, []);
 
     // Load reports from backend
@@ -86,6 +94,8 @@ export default function AppTest() {
         // Reload reports after saving
         await loadReports();
         setShowCreateModal(false);
+        const usage = recordApiUsage(1); // 1 credit for saving a report
+        checkAndAlertThreshold(usage);
     };
 
     // View an existing report

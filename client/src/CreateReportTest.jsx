@@ -3,10 +3,28 @@ import "./Styles/ReportCard.css";
 import React, { useState, useEffect } from "react";
 import { reportAPI } from './services/reportApi';
 import { tokenManager } from './services/authApi';
+const date = { today: new Date().toISOString().split("T")[0] };
+const minDate = new Date(Date.now() - 365*24*60*60*1000).toISOString().split("T")[0]; // 1 year ago
+
+const today = new Date().toLocaleDateString('en-CA'); // returns YYYY-MM-DD format
+
+
+function checkDateInRange(selectedDate) {
+         // validate date range
+        if (!selectedDate) {
+        alert(`⚠️ Please select a date between ${minDate} and ${date.today}.`);
+        return false;
+    }
+    if (selectedDate < minDate || selectedDate > date.today) {
+        alert(`⚠️ Date must be between ${minDate} and ${date.today}.`);
+        return false;
+    }
+    return true;
+}
 
 function CreateReportTest({ report, onSave, onClose, readOnly }) {
     const [formData, setFormData] = useState(report.formData || {
-        date: "",
+        date: today,
         time: "",
         ampm: "AM",
         yourAge: "",
@@ -45,6 +63,7 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
     };
 
     const handleSave = async () => {
+        if (!checkDateInRange(formData.date)) return;
         if (readOnly) return;
 
         // Validation
@@ -137,6 +156,8 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                 id="date"
                                 type="date"
                                 className="input"
+                                min={minDate}
+                                max={date.today}
                                 value={formData.date}
                                 onChange={handleChange}
                                 readOnly={readOnly}
