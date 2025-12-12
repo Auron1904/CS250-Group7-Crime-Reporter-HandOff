@@ -12,151 +12,217 @@
 *{
     box-sizing:border-box;
 }
-body, #root, .page {
-    background:var(--bg);
-    color:var(--text);
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-    height:100%;
-    margin:0;
+
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
 }
 
-/* HEADER */
-.header{
-    display:flex;
+.page {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ========================================
+   HEADER
+   ======================================== */
+.header {
+    display: flex;
     justify-content: space-between;
-    align-items:center;
-    padding:12px;
-    border-bottom:1px solid var(--border);
-    background: #ffffff
-                linear-gradient(
-                    90deg,
-                    rgba(255,255,255,1) 0%,
-                    rgba(240,153,77,1) 37%,
-                    rgba(184,0,0,1) 100%);
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    background: #ffffff linear-gradient(
+        90deg,
+        rgba(255,255,255,1) 0%,
+        rgba(240,153,77,1) 37%,
+        rgba(184,0,0,1) 100%
+    );
+    flex-wrap: nowrap; /* Keeps logo and button on same row */
+    gap: 12px;
+}
+
+.schoolLogo{
+    height: 40px;
+    width: 172px;
+    background: transparent url(../images/mainLogo.png);
+    background-size: cover;
+    flex-shrink: 1; /* Allows logo to shrink on small screens */
+    min-width: 80px; /* Don't get too small */
 }
 
 .loginBtn {
     background: transparent;
-    border:none;
+    border: none;
     color: whitesmoke;
     font-size: 16px;
     font-weight: bold;
-    padding:6px 10px;
-    border-radius:999px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    flex-shrink: 0; /* Button never shrinks */
+    white-space: nowrap; /* Text never wraps */
 }
+
 .loginBtn:hover {
     color: darkgray;
-    opacity:.9;
+    opacity: .9;
 }
 
-.schoolLogo{
-    height:40px;
-    width:172px;
-    background: transparent url(../images/mainLogo.png);
-    background-size: cover;
-}
-/* END HEADER */
-
-/* NAVBAR */
-.navBar{
-    display:flex;
+/* ========================================
+   NAVBAR & FILTERS
+   ======================================== */
+.navBar {
+    display: flex;
+    align-items: flex-start;
     justify-content: space-between;
-    align-items:center;
-    padding:2px;
-    border-bottom:1px solid var(--border);
-    gap: 10px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #111315;
+    gap: 16px;
+    flex-wrap: wrap;
 }
-/*END NAVBAR */
 
-/* MAIN CONTENT */
-.content{
-    display:grid;
+.navBar .filtersCard {
+    flex: 1 1 600px;
+    background: var(--panel);
+    padding: 10px 12px;
+    border-radius: 12px;
+}
+
+.navBar .filtersCard > * {
+    width: 100%;
+}
+
+.filtersCard .filtersRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px 12px;
+}
+
+.createBtn {
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 600;
+    border: none;
+    background: var(--accent);
+    color: var(--white);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.createBtn:hover {
+    filter: brightness(1.05);
+}
+
+.createBtn:disabled{
+    opacity: .9;
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.content {
+    display: grid;
     grid-template-columns: 370px 1fr;
-    gap:10px;
-    padding:24px 20px 40px;
-    margin:0;
-    width:100%;
+    gap: 10px;
+    padding: 24px 20px 40px;
+    margin: 0;
+    width: 100%;
     background: url("../images/school.jpg");
     background-size: cover;
+    flex: 1;
+    min-height: 600px; /* Ensures map has space */
 }
 
-.leftCol{
-    display:flex;
-    flex-direction:column;
+.leftCol {
+    display: flex;
+    flex-direction: column;
 }
-/* Map in separate css file */
-/* END MAIN CONTENT */
 
-/* BUTTONS */
-.btn{
+.mapPanel {
+    flex: 1;
+    min-height: 500px; /* Minimum height on desktop */
+    height: 100%;
+}
+
+/* ========================================
+   CARDS & BUTTONS
+   ======================================== */
+.card {
+    box-sizing: border-box;
+}
+
+.btn {
     border: 1px solid transparent;
     border-radius: 12px;
     padding: 10px 14px;
     font-weight: 600;
     cursor: pointer;
 }
-.btn.primary{
+
+.btn.primary {
     background: var(--accent);
     color: var(--white);
 }
-.btn.primary:hover{
+
+.btn.primary:hover {
     filter: brightness(1.05);
 }
-.btn.secondary{
+
+.btn.secondary {
     background: transparent;
     color: var(--text);
     border-color: var(--border);
 }
-.btn.secondary:hover{
+
+.btn.secondary:hover {
     background: rgba(255,255,255,.06);
 }
 
-.createBtn{
-    background:var(--accent);
-    color:var(--white);
-    padding:12px 16px;
-    border-radius:16px;
-    font-weight:600;
-}
-.createBtn:disabled{
-    opacity:.9;
-}
-/* END BUTTONS */
-
-/* FORM */
-.formGrid{
+/* ========================================
+   FORM ELEMENTS
+   ======================================== */
+.formGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px 18px; /* row col */
+    gap: 16px 18px;
 }
 
-.full{
+.full {
     grid-column: 1 / -1;
 }
 
-/* Field block */
-.field{
+.field {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.field label{
+.field label {
     font-size: .92rem;
     color: #e9e3e3;
     letter-spacing: .2px;
 }
 
-/* Section title inside form */
-.fieldsetTitle{
+.fieldsetTitle {
     margin-top: 4px;
     font-weight: 700;
     color: var(--white);
     opacity: .92;
 }
 
-/* Input */
-.input{
+.input {
     background: var(--panelLight);
     color: var(--text);
     border: 1px solid var(--border);
@@ -167,31 +233,28 @@ body, #root, .page {
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 
-.input::placeholder{
+.input::placeholder {
     color: #bfb8b8;
     opacity: .85;
 }
 
-.input:focus{
+.input:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(166,25,46,.25);
 }
 
-/* Text area */
-.textarea{
+.textarea {
     resize: vertical;
     min-height: 110px;
 }
 
-/* Time row with segmented AM/PM */
-.timeRow{
+.timeRow {
     display: flex;
     gap: 12px;
     align-items: center;
 }
 
-/* AM/PM */
-.segmented{
+.segmented {
     display: inline-flex;
     background: var(--panelLight);
     border: 1px solid var(--border);
@@ -199,7 +262,7 @@ body, #root, .page {
     overflow: hidden;
 }
 
-.segmentedItem{
+.segmentedItem {
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -211,33 +274,31 @@ body, #root, .page {
     color: #ddd;
 }
 
-.segmentedItem + .segmentedItem{
+.segmentedItem + .segmentedItem {
     border-left: 1px solid var(--border);
 }
 
-.segmentedItem input{
-    /* hide native radio but keep it accessible */
+.segmentedItem input {
     position: absolute;
     opacity: 0;
     inset: 0;
     cursor: pointer;
 }
 
-.segmentedItem input:checked + span{
+.segmentedItem input:checked + span {
     background: var(--accent);
     color: var(--white);
     padding: 6px 12px;
     border-radius: 8px;
 }
 
-/* Checkboxes row */
-.checksRow{
+.checksRow {
     display: flex;
     flex-wrap: wrap;
     gap: 10px 14px;
 }
 
-.check{
+.check {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -247,69 +308,203 @@ body, #root, .page {
     border-radius: 10px;
 }
 
-.check input{
+.check input {
     accent-color: var(--accent);
 }
 
-.actions{
+.actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     margin-top: 6px;
 }
-/* END FORM */
 
-/* MEDIA QUERY */
-@media (max-width: 720px){
-    .formGrid{
+.reportField {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.reportDescription {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+.reportCard {
+    max-height: none;
+}
+
+/* ========================================
+   MEDIA QUERIES
+   ======================================== */
+
+/* Tablet: 720px - 860px */
+@media (min-width: 720px) and (max-width: 860px) {
+    .navBar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 10px;
+    }
+
+    .navBar .filtersCard {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .createBtn {
+        align-self: flex-end;
+        margin-top: 8px;
+        text-align: center;
+    }
+}
+
+/* Mobile & Tablet: Below 768px */
+@media (max-width: 768px) {
+    /* Header stays on one row but more compact */
+    .header {
+        padding: 10px 12px;
+        gap: 10px;
+    }
+
+    .schoolLogo {
+        width: 120px;
+        height: 35px;
+    }
+
+    .loginBtn {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    /* Navbar stacks vertically */
+    .navBar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 10px;
+        overflow: visible;
+        height: auto;
+        min-height: auto;
+    }
+
+    .filtersCard {
+        overflow: visible !important;
+        max-height: none !important;
+    }
+
+    .createBtn {
+        align-self: stretch;
+        text-align: center;
+        margin-top: 0;
+    }
+
+    /* Content stacks vertically */
+    .content {
+        display: flex;
+        flex-direction: column;
+        padding: 0 16px 16px 16px;
+        overflow: visible;
+        min-height: auto;
+    }
+
+    .leftCol {
+        width: 100%;
+        margin-bottom: 16px;
+    }
+
+    .mapPanel {
+        width: 100% !important;
+        height: 400px !important;
+        min-height: 400px !important;
+        max-height: 600px !important;
+    }
+
+    .mapPanel > div,
+    .mapPanel > * {
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    /* Forms become single column */
+    .formGrid {
         grid-template-columns: 1fr;
     }
-    .timeRow{
+
+    .timeRow {
         flex-direction: column;
         align-items: stretch;
     }
-    .segmented{
+
+    .segmented {
         width: fit-content;
     }
 }
 
-/* Media query to adjust as window size changes*/
-@media (max-width: 980px){
-    .content{
-        grid-template-columns:1fr;
+/* Small Mobile: Below 480px */
+@media (max-width: 480px) {
+    .header {
+        padding: 8px 10px;
+        gap: 8px;
     }
-}
-/* END MEDIA QUERY */
 
-.field{
-width:100%;
-padding:10px 12px;
-margin:8px 0;
-border-radius:10px;
-border:1px solid #ddd;
-font: inherit;
-}
+    .schoolLogo {
+        width: 100px;
+        height: 30px;
+        min-width: 80px;
+    }
 
+    .loginBtn {
+        font-size: 13px;
+        padding: 5px 10px;
+    }
 
+    .navBar {
+        padding: 6px 8px;
+    }
 
+    .content {
+        padding: 0 12px 12px 12px;
+    }
 
-.swapText{
-color:#555;
-font-size:.9rem;
-margin:12px 0 0;
-}
+    .mapPanel {
+        height: 350px !important;
+        min-height: 350px !important;
+    }
 
+    .mapPanel > div,
+    .mapPanel > * {
+        min-height: 350px !important;
+    }
 
-
-
-.linkish{
-background:none;
-border:0;
-color:var(--accent);
-cursor:pointer;
-font-weight:600;
-margin-left:6px;
-padding:0;
 }
 
+.footer {
+    padding: 16px 20px;
+    text-align: center;
+    background: var(--panel);
+    color: var(--text);
+    border-top: 1px solid var(--border);
+}
 
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.footer-members {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.footer-divider {
+    opacity: 0.6;
+}
+
+.team-badge {
+    color: var(--accent);
+    font-weight: 700;
+}

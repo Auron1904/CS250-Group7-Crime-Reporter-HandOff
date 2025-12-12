@@ -7,7 +7,7 @@ import AuthModal from "./LoginSignUp.jsx";
 import { reportAPI } from './services/reportApi';
 import { tokenManager } from './services/authApi';
 import { checkAndAlertThreshold, getCreditUsage, recordApiUsage } from "./services/apiCreditTracker.js";
-
+import FBIDataNoticeTest from "./FBIDataNoticeTest.jsx";
 
 export default function AppTest() {
     // Reports state (for map pins)
@@ -158,6 +158,7 @@ export default function AppTest() {
                     Create Report
                 </button>
             </nav>
+            <FBIDataNoticeTest />
 
             {/* Main content with left rail and map */}
             <main className="content">
@@ -223,6 +224,16 @@ export default function AppTest() {
                     readOnly={false}
                 />
             )}
+
+            <footer className="footer">
+                <div className="footer-content">
+                <span className="footer-text">SDSU Crime Reporter</span>
+                <span className="footer-divider">|</span>
+                <span className="team-badge">Group 4 & 7</span>
+                <span className="footer-divider">|</span>
+                <span className="footer-text">CS 250 Fall 2025</span>
+            </div>
+            </footer>
 
             {/* Modal for viewing a saved report */}
             {viewReport && viewReport.formData && (
