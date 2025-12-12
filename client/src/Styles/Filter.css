@@ -1,9 +1,9 @@
-.filtersCard{
+.filtersCard {
     display: flex;
     align-items: center;
     background: #111111 var(--panel);
-    padding:8px;
-    gap:8px;
+    padding: 8px;
+    gap: 8px;
     width: fit-content;
 }
 
@@ -19,10 +19,11 @@
     width: 100%;
     gap: 10px;
 }
+
 .filter-section > div {
-    min-width: 215px; /* or any fixed width you prefer */
+    min-width: 215px;
     max-width: 215px;
-    flex-shrink: 0; /* prevent shrinking */
+    flex-shrink: 0;
 }
 
 .resetBtn {
@@ -39,6 +40,7 @@
     flex-shrink: 0;
     text-align: center;
 }
+
 .resetBtn:hover {
     background-color: #d32f2f;
 }
@@ -49,4 +51,68 @@
     font-size: 0.85rem;
     padding: 2px 6px;
     color: #333;
+}
+
+/* ========================================
+   MOBILE RESPONSIVE FIXES
+   ======================================== */
+
+/* Tablets and smaller */
+@media (max-width: 1024px) {
+    .filtersCard {
+        width: 100%;
+    }
+    
+    .filter-section > div {
+        min-width: 180px;
+        max-width: 180px;
+    }
+}
+
+/* Mobile phones - VERTICAL STACK */
+@media (max-width: 768px) {
+    .filtersCard {
+        width: 100%;
+        padding: 12px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-section {
+        max-height: none; /* Remove height restriction */
+        flex-direction: column; /* Stack vertically */
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    /* Make each filter full width */
+    .filter-section > div {
+        min-width: 100%;
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    /* Reset button full width at bottom */
+    .resetBtn {
+        width: 100%;
+        height: 44px; /* Bigger for touch */
+        margin-top: 4px;
+        font-size: 15px;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .filtersCard {
+        padding: 10px;
+    }
+    
+    .filter-section {
+        gap: 8px;
+    }
+    
+    .resetBtn {
+        height: 40px;
+        font-size: 14px;
+    }
 }

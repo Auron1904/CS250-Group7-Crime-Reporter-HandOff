@@ -4,6 +4,7 @@ import SDSUMap from "./Map.jsx";
 import Report from "./CreateReport.jsx";
 import Filter from "./Filter.jsx";
 import AuthModal from "./LoginSignUp.jsx";
+import FBIDataNotice from "./FBIDataNotice.jsx";
 
 export default function App() {
     // 'Create Report' pop-up
@@ -44,6 +45,7 @@ export default function App() {
                     Create Report
                 </button>
             </nav>
+            <FBIDataNotice />
 
             {/* Main content with left rail and map */}
             <main className="content">
@@ -77,6 +79,17 @@ export default function App() {
                     <SDSUMap />
                 </section>
             </main>
+
+             <footer className="footer">
+    <div className="footer-content">
+        <span className="footer-text">SDSU Crime Reporter</span>
+        <span className="footer-divider">|</span>
+        <span className="team-badge">Group 4 & 7</span>
+        <span className="footer-divider">|</span>
+        <span className="footer-text">CS 250 Fall 2025</span>
+    </div>
+    
+</footer>
             <Report
                 showModal={ showModal }
                 setShowModal={ setShowModal }

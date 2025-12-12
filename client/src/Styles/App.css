@@ -12,15 +12,27 @@
 *{
     box-sizing:border-box;
 }
-body, #root, .page {
-    background:var(--bg);
-    color:var(--text);
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-    height:100%;
-    margin:0;
+
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
 }
 
-/* HEADER */
+.page {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ========================================
+   HEADER
+   ======================================== */
 .header {
     display: flex;
     justify-content: space-between;
@@ -33,33 +45,40 @@ body, #root, .page {
         rgba(240,153,77,1) 37%,
         rgba(184,0,0,1) 100%
     );
-    flex-wrap: nowrap;
-}
-
-
-
-.loginBtn {
-    background: transparent;
-    border:none;
-    color: whitesmoke;
-    font-size: 16px;
-    font-weight: bold;
-    padding:6px 10px;
-    border-radius:999px;
-}
-.loginBtn:hover {
-    color: darkgray;
-    opacity:.9;
+    flex-wrap: nowrap; /* Keeps logo and button on same row */
+    gap: 12px;
 }
 
 .schoolLogo{
-    height:40px;
-    width:172px;
+    height: 40px;
+    width: 172px;
     background: transparent url(../images/mainLogo.png);
     background-size: cover;
+    flex-shrink: 1; /* Allows logo to shrink on small screens */
+    min-width: 80px; /* Don't get too small */
 }
-/* END HEADER */
 
+.loginBtn {
+    background: transparent;
+    border: none;
+    color: whitesmoke;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 6px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    flex-shrink: 0; /* Button never shrinks */
+    white-space: nowrap; /* Text never wraps */
+}
+
+.loginBtn:hover {
+    color: darkgray;
+    opacity: .9;
+}
+
+/* ========================================
+   NAVBAR & FILTERS
+   ======================================== */
 .navBar {
     display: flex;
     align-items: flex-start;
@@ -106,141 +125,104 @@ body, #root, .page {
     filter: brightness(1.05);
 }
 
-@media (max-width: 720px){
-    .navBar {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 8px 10px;
-    }
-
-    .createBtn {
-        align-self: stretch;
-        text-align: center;
-    }
+.createBtn:disabled{
+    opacity: .9;
 }
 
-
-
-/* ----------------------- */
-/*      MEDIA QUERIES      */
-/* ----------------------- */
-
-/* Mobile */
-@media (max-width: 600px) {
-    .navBar {
-        flex-direction: column;
-        gap: 5px;
-        padding: 5px;
-        align-item: stretch;
-    }
-}
-
-/* Tablet */
-@media (min-width: 600px) and (max-width: 900px) {
-    .navBar {
-        gap: 15px;
-        padding: 10px;
-    }
-}
-
-/* Desktop */
-@media (min-width: 900px) {
-    .navBar {
-        gap: 20px;
-        padding: 10px 20px;
-    }
-}
-
-
-/* MAIN CONTENT */
-.content{
-    display:grid;
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.content {
+    display: grid;
     grid-template-columns: 370px 1fr;
-    gap:10px;
-    padding:24px 20px 40px;
-    margin:0;
-    width:100%;
+    gap: 10px;
+    padding: 24px 20px 40px;
+    margin: 0;
+    width: 100%;
     background: url("../images/school.jpg");
     background-size: cover;
+    flex: 1;
+    min-height: 600px; /* Ensures map has space */
 }
 
-.leftCol{
-    display:flex;
-    flex-direction:column;
+.leftCol {
+    display: flex;
+    flex-direction: column;
 }
-/* Map in separate css file */
-/* END MAIN CONTENT */
 
-/* BUTTONS */
-.btn{
+.mapPanel {
+    flex: 1;
+    min-height: 500px; /* Minimum height on desktop */
+    height: 100%;
+}
+
+/* ========================================
+   CARDS & BUTTONS
+   ======================================== */
+.card {
+    box-sizing: border-box;
+}
+
+.btn {
     border: 1px solid transparent;
     border-radius: 12px;
     padding: 10px 14px;
     font-weight: 600;
     cursor: pointer;
 }
-.btn.primary{
+
+.btn.primary {
     background: var(--accent);
     color: var(--white);
 }
-.btn.primary:hover{
+
+.btn.primary:hover {
     filter: brightness(1.05);
 }
-.btn.secondary{
+
+.btn.secondary {
     background: transparent;
     color: var(--text);
     border-color: var(--border);
 }
-.btn.secondary:hover{
+
+.btn.secondary:hover {
     background: rgba(255,255,255,.06);
 }
 
-.createBtn{
-    background:var(--accent);
-    color:var(--white);
-    padding:12px 16px;
-    border-radius:16px;
-    font-weight:600;
-}
-.createBtn:disabled{
-    opacity:.9;
-}
-/* END BUTTONS */
-
-/* FORM */
-.formGrid{
+/* ========================================
+   FORM ELEMENTS
+   ======================================== */
+.formGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px 18px; /* row col */
+    gap: 16px 18px;
 }
 
-.full{
+.full {
     grid-column: 1 / -1;
 }
 
-/* Field block */
-.field{
+.field {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.field label{
+.field label {
     font-size: .92rem;
     color: #e9e3e3;
     letter-spacing: .2px;
 }
 
-/* Section title inside form */
-.fieldsetTitle{
+.fieldsetTitle {
     margin-top: 4px;
     font-weight: 700;
     color: var(--white);
     opacity: .92;
 }
 
-/* Input */
-.input{
+.input {
     background: var(--panelLight);
     color: var(--text);
     border: 1px solid var(--border);
@@ -251,31 +233,28 @@ body, #root, .page {
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 
-.input::placeholder{
+.input::placeholder {
     color: #bfb8b8;
     opacity: .85;
 }
 
-.input:focus{
+.input:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(166,25,46,.25);
 }
 
-/* Text area */
-.textarea{
+.textarea {
     resize: vertical;
     min-height: 110px;
 }
 
-/* Time row with segmented AM/PM */
-.timeRow{
+.timeRow {
     display: flex;
     gap: 12px;
     align-items: center;
 }
 
-/* AM/PM */
-.segmented{
+.segmented {
     display: inline-flex;
     background: var(--panelLight);
     border: 1px solid var(--border);
@@ -283,7 +262,7 @@ body, #root, .page {
     overflow: hidden;
 }
 
-.segmentedItem{
+.segmentedItem {
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -295,33 +274,31 @@ body, #root, .page {
     color: #ddd;
 }
 
-.segmentedItem + .segmentedItem{
+.segmentedItem + .segmentedItem {
     border-left: 1px solid var(--border);
 }
 
-.segmentedItem input{
-    /* hide native radio but keep it accessible */
+.segmentedItem input {
     position: absolute;
     opacity: 0;
     inset: 0;
     cursor: pointer;
 }
 
-.segmentedItem input:checked + span{
+.segmentedItem input:checked + span {
     background: var(--accent);
     color: var(--white);
     padding: 6px 12px;
     border-radius: 8px;
 }
 
-/* Checkboxes row */
-.checksRow{
+.checksRow {
     display: flex;
     flex-wrap: wrap;
     gap: 10px 14px;
 }
 
-.check{
+.check {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -331,72 +308,37 @@ body, #root, .page {
     border-radius: 10px;
 }
 
-.check input{
+.check input {
     accent-color: var(--accent);
 }
 
-.actions{
+.actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     margin-top: 6px;
 }
-/* END FORM */
 
-/* MEDIA QUERY */
-@media (max-width: 720px){
-    .formGrid{
-        grid-template-columns: 1fr;
-    }
-    .timeRow{
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .segmented{
-        width: fit-content;
-    }
-
-    /* Mobile navbar + header behavior */
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .navBar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-        padding: 6px 10px;
-    }
+.reportField {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
-/* Media query to adjust as window size changes*/
-@media (max-width: 720px){
-    .formGrid{
-        grid-template-columns: 1fr;
-    }
-    .timeRow{
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .segmented{
-        width: fit-content;
-    }
-
-    /* MOBILE NAVBAR */
-    .navBar {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 8px 10px;
-    }
-
-    .createBtn {
-        align-self: stretch;
-        text-align: center;
-    }
+.reportDescription {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
+.reportCard {
+    max-height: none;
+}
+
+/* ========================================
+   MEDIA QUERIES
+   ======================================== */
+
+/* Tablet: 720px - 860px */
 @media (min-width: 720px) and (max-width: 860px) {
     .navBar {
         flex-direction: column;
@@ -416,3 +358,153 @@ body, #root, .page {
     }
 }
 
+/* Mobile & Tablet: Below 768px */
+@media (max-width: 768px) {
+    /* Header stays on one row but more compact */
+    .header {
+        padding: 10px 12px;
+        gap: 10px;
+    }
+
+    .schoolLogo {
+        width: 120px;
+        height: 35px;
+    }
+
+    .loginBtn {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    /* Navbar stacks vertically */
+    .navBar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 10px;
+        overflow: visible;
+        height: auto;
+        min-height: auto;
+    }
+
+    .filtersCard {
+        overflow: visible !important;
+        max-height: none !important;
+    }
+
+    .createBtn {
+        align-self: stretch;
+        text-align: center;
+        margin-top: 0;
+    }
+
+    /* Content stacks vertically */
+    .content {
+        display: flex;
+        flex-direction: column;
+        padding: 0 16px 16px 16px;
+        overflow: visible;
+        min-height: auto;
+    }
+
+    .leftCol {
+        width: 100%;
+        margin-bottom: 16px;
+    }
+
+    .mapPanel {
+        width: 100% !important;
+        height: 400px !important;
+        min-height: 400px !important;
+        max-height: 600px !important;
+    }
+
+    .mapPanel > div,
+    .mapPanel > * {
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    /* Forms become single column */
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .timeRow {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .segmented {
+        width: fit-content;
+    }
+}
+
+/* Small Mobile: Below 480px */
+@media (max-width: 480px) {
+    .header {
+        padding: 8px 10px;
+        gap: 8px;
+    }
+
+    .schoolLogo {
+        width: 100px;
+        height: 30px;
+        min-width: 80px;
+    }
+
+    .loginBtn {
+        font-size: 13px;
+        padding: 5px 10px;
+    }
+
+    .navBar {
+        padding: 6px 8px;
+    }
+
+    .content {
+        padding: 0 12px 12px 12px;
+    }
+
+    .mapPanel {
+        height: 350px !important;
+        min-height: 350px !important;
+    }
+
+    .mapPanel > div,
+    .mapPanel > * {
+        min-height: 350px !important;
+    }
+
+}
+
+.footer {
+    padding: 16px 20px;
+    text-align: center;
+    background: var(--panel);
+    color: var(--text);
+    border-top: 1px solid var(--border);
+}
+
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.footer-members {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.footer-divider {
+    opacity: 0.6;
+}
+
+.team-badge {
+    color: var(--accent);
+    font-weight: 700;
+}
