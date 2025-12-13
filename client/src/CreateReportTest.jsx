@@ -149,6 +149,48 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                 <div className="modalBody">
                     <form className="formGrid" onSubmit={(e) => e.preventDefault()}>
 
+                        {/* ============ LOCATION DISPLAY SECTION - ADDED ============ */}
+                        {!readOnly && (
+                            <div className="field full" style={{ 
+                                background: 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)', 
+                                padding: '16px', 
+                                borderRadius: '12px',
+                                border: '2px solid #4caf50',
+                                marginBottom: '16px'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span style={{ fontSize: '24px', marginRight: '10px' }}>📍</span>
+                                    <label style={{ fontWeight: 'bold', fontSize: '1rem', color: '#2e7d32', margin: 0 }}>
+                                        Incident Location
+                                    </label>
+                                </div>
+                                <div style={{ 
+                                    fontSize: '0.9rem', 
+                                    color: '#1b5e20',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                                    padding: '10px',
+                                    borderRadius: '8px',
+                                    fontFamily: 'monospace'
+                                }}>
+                                    <div><strong>Latitude:</strong> {report.lat?.toFixed(6)}</div>
+                                    <div><strong>Longitude:</strong> {report.lng?.toFixed(6)}</div>
+                                </div>
+                                <div style={{ 
+                                    marginTop: '10px', 
+                                    fontSize: '0.85rem', 
+                                    fontStyle: 'italic',
+                                    color: '#388e3c',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px'
+                                }}>
+                                    <span>💡</span>
+                                    <span>Click anywhere on the map to update the incident location</span>
+                                </div>
+                            </div>
+                        )}
+                        {/* ============ END LOCATION SECTION ============ */}
+
                         {/* Date & Time */}
                         <div className="field">
                             <label htmlFor="date">Date of incident *</label>
