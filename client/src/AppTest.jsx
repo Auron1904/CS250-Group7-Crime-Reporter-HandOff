@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import "./Styles/App.css";
 import MapTest from "./MapTest.jsx";
 import CreateReportTest from "./CreateReportTest.jsx";
-import Filter from "./FilterTest.jsx";
+import Filter from "./Filter.jsx";
 import AuthModal from "./LoginSignUp.jsx";
 import { reportAPI } from './services/reportApi';
 import { tokenManager } from './services/authApi';
+import { checkAndAlertThreshold, getCreditUsage, recordApiUsage } from "./services/apiCreditTracker.js";
 import FBIDataNoticeTest from "./FBIDataNoticeTest.jsx";
 
 export default function AppTest() {
@@ -20,6 +21,9 @@ export default function AppTest() {
 
     // User state
     const [currentUser, setCurrentUser] = useState(null);
+
+    // NEW: Pin-dropping state
+    const [selectedLocation, setSelectedLocation] = useState(null);
 
     // Load user info on mount
     useEffect(() => {
@@ -39,10 +43,17 @@ export default function AppTest() {
                 setShowCreateModal(false);
                 setAuthOpen(false);
                 setViewReport(null);
+                setSelectedLocation(null); // Clear pin on ESC
             }
         }
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
+    }, []);
+
+    // Check API credit status on app load
+    useEffect(() => {
+        const usage = getCreditUsage();
+        checkAndAlertThreshold(usage);
     }, []);
 
     // Load reports from backend
@@ -82,11 +93,22 @@ export default function AppTest() {
         }
     };
 
+    // NEW: Handle map click for pin dropping
+    const handleMapClick = (location) => {
+        if (showCreateModal) {
+            setSelectedLocation(location);
+            console.log('📍 Pin dropped at:', location);
+        }
+    };
+
     // Handle saving a new report
     const handleSaveReport = async () => {
         // Reload reports after saving
         await loadReports();
         setShowCreateModal(false);
+        setSelectedLocation(null); // Clear pin after save
+        const usage = recordApiUsage(1); // 1 credit for saving a report
+        checkAndAlertThreshold(usage);
     };
 
     // View an existing report
@@ -115,7 +137,15 @@ export default function AppTest() {
             setAuthOpen(true);
             return;
         }
+        // Start with default SDSU center
+        setSelectedLocation({ lat: 32.7764, lng: -117.0719 });
         setShowCreateModal(true);
+    };
+
+    // Handle closing create modal
+    const handleCloseCreateModal = () => {
+        setShowCreateModal(false);
+        setSelectedLocation(null); // Clear pin on close
     };
 
     return (
@@ -193,35 +223,68 @@ export default function AppTest() {
                 </section>
 
                 <section className="mapPanel">
+                    {/* NEW: Instruction banner when creating report */}
+                    {showCreateModal && (
+                        <div style={{
+                            position: 'absolute',
+                            top: '10px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            background: 'rgba(76, 175, 80, 0.95)',
+                            color: 'white',
+                            padding: '12px 20px',
+                            borderRadius: '8px',
+                            zIndex: 1000,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                            pointerEvents: 'none'
+                        }}>
+                            📍 Click anywhere on the map to set incident location
+                        </div>
+                    )}
+                    
                     <MapTest
                         reports={reports}
-                        onMapClick={() => {}} // Disabled for now
+                        onMapClick={handleMapClick}
                         onMarkerClick={handleViewReport}
+                        selectedLocation={selectedLocation}
+                        isCreatingReport={showCreateModal}
                     />
                 </section>
             </main>
 
             {/* Modal for creating a report */}
-            {showCreateModal && (
+            {showCreateModal && selectedLocation && (
                 <CreateReportTest
                     report={{ 
                         id: null, 
                         formData: null,
-                        lat: 32.7764,
-                        lng: -117.0719
+                        lat: selectedLocation.lat,
+                        lng: selectedLocation.lng
                     }}
                     onSave={handleSaveReport}
-                    onClose={() => setShowCreateModal(false)}
+                    onClose={handleCloseCreateModal}
                     readOnly={false}
                 />
             )}
+
+            <footer className="footer">
+                <div className="footer-content">
+                    <span className="footer-text">SDSU Crime Reporter</span>
+                    <span className="footer-divider">|</span>
+                    <span className="team-badge">Group 4 & 7</span>
+                    <span className="footer-divider">|</span>
+                    <span className="footer-text">CS 250 Fall 2025</span>
+                </div>
+            </footer>
 
             {/* Modal for viewing a saved report */}
             {viewReport && viewReport.formData && (
                 <CreateReportTest
                     report={viewReport}
                     onClose={() => setViewReport(null)}
-                    readOnly={ true }
+                    readOnly={true}
                 />
             )}
 

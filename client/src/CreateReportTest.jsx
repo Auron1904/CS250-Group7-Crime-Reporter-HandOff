@@ -3,12 +3,14 @@ import "./Styles/ReportCard.css";
 import React, { useState, useEffect } from "react";
 import { reportAPI } from './services/reportApi';
 import { tokenManager } from './services/authApi';
+const date = { today: new Date().toISOString().split("T")[0] };
+const minDate = new Date(Date.now() - 365*24*60*60*1000).toISOString().split("T")[0]; // 1 year ago
 
+const today = new Date().toLocaleDateString('en-CA'); // returns YYYY-MM-DD format
 
 
 function checkDateInRange(selectedDate) {
-         // validate date range 
-    
+         // validate date range
         if (!selectedDate) {
         alert(`⚠️ Please select a date between ${minDate} and ${date.today}.`);
         return false;
@@ -19,17 +21,10 @@ function checkDateInRange(selectedDate) {
     }
     return true;
 }
-function checkAge(age) {
-    const ageNum = Number(age);
-    if (isNaN(ageNum) || ageNum < 0 || ageNum > 120) {
-        alert("⚠️ Please enter a valid age between 0 and 120.");
-        return false;
-    }
-    return true;    
-}
+
 function CreateReportTest({ report, onSave, onClose, readOnly }) {
     const [formData, setFormData] = useState(report.formData || {
-        date: date.today,  // starts with today for convenience and forces the date range input to not start at min( a year ago )
+        date: today,
         time: "",
         ampm: "AM",
         yourAge: "",
@@ -68,6 +63,7 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
     };
 
     const handleSave = async () => {
+        if (!checkDateInRange(formData.date)) return;
         if (readOnly) return;
 
         // Validation
@@ -153,6 +149,48 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                 <div className="modalBody">
                     <form className="formGrid" onSubmit={(e) => e.preventDefault()}>
 
+                        {/* ============ LOCATION DISPLAY SECTION - ADDED ============ */}
+                        {!readOnly && (
+                            <div className="field full" style={{ 
+                                background: 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)', 
+                                padding: '16px', 
+                                borderRadius: '12px',
+                                border: '2px solid #4caf50',
+                                marginBottom: '16px'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span style={{ fontSize: '24px', marginRight: '10px' }}>📍</span>
+                                    <label style={{ fontWeight: 'bold', fontSize: '1rem', color: '#2e7d32', margin: 0 }}>
+                                        Incident Location
+                                    </label>
+                                </div>
+                                <div style={{ 
+                                    fontSize: '0.9rem', 
+                                    color: '#1b5e20',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                                    padding: '10px',
+                                    borderRadius: '8px',
+                                    fontFamily: 'monospace'
+                                }}>
+                                    <div><strong>Latitude:</strong> {report.lat?.toFixed(6)}</div>
+                                    <div><strong>Longitude:</strong> {report.lng?.toFixed(6)}</div>
+                                </div>
+                                <div style={{ 
+                                    marginTop: '10px', 
+                                    fontSize: '0.85rem', 
+                                    fontStyle: 'italic',
+                                    color: '#388e3c',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px'
+                                }}>
+                                    <span>💡</span>
+                                    <span>Click anywhere on the map to update the incident location</span>
+                                </div>
+                            </div>
+                        )}
+                        {/* ============ END LOCATION SECTION ============ */}
+
                         {/* Date & Time */}
                         <div className="field">
                             <label htmlFor="date">Date of incident *</label>
@@ -181,19 +219,18 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                     readOnly={readOnly}
                                     required
                                 />
-                               
                                 <div className="segmented" role="radiogroup" aria-label="AM or PM">
                                     {["AM","PM"].map(v => (
-                                        <label key={ v } className="segmentedItem">
+                                        <label key={v} className="segmentedItem">
                                             <input
                                                 type="radio"
                                                 name="ampm"
-                                                value={ v }
-                                                checked={ formData.ampm === v }
-                                                onChange={ handleChange }
-                                                disabled={ readOnly }
+                                                value={v}
+                                                checked={formData.ampm === v}
+                                                onChange={handleChange}
+                                                disabled={readOnly}
                                             />
-                                            <span>{ v }</span>
+                                            <span>{v}</span>
                                         </label>
                                     ))}
                                 </div>
@@ -221,7 +258,7 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                             <label htmlFor="yourGender">Your Gender *</label>
                             <select
                                 id="yourGender"
-                                value={ formData.yourGender }
+                                value={formData.yourGender}
                                 className="input"
                                 onChange={handleChange}
                                 disabled={readOnly}
@@ -245,9 +282,9 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                 type="text"
                                 placeholder="(optional)"
                                 className="input"
-                                value={ formData.personName }
-                                onChange={ handleChange }
-                                readOnly={ readOnly }
+                                value={formData.personName}
+                                onChange={handleChange}
+                                readOnly={readOnly}
                             />
                         </div>
 
@@ -271,7 +308,7 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                             <label htmlFor="personGender">Gender *</label>
                             <select
                                 id="personGender"
-                                value={ formData.personGender }
+                                value={formData.personGender}
                                 className="input"
                                 onChange={handleChange}
                                 disabled={readOnly}
@@ -289,41 +326,22 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                         <div className="field full">
                             <label>Type of Incident *</label>
                             <div className="checksRow">
-                                {[
-                                    "Theft",
-                                    "Vandalism",
-                                    "Aggravated Assault",
-                                    "Disturbance",
-                                    "Illegal Gambling",
-                                    "Public Intoxication",
-                                    "Drug Possession",
-                                    "Underage Drinking",
-                                    "Drug-Trafficking",
-                                    "Extortion",
-                                    "Racketeering",
-                                    "Sexual Assault",
-                                    "Murder",
-                                    "Manslaughter",
-                                    "Motor-Theft",
-                                    "Larceny-Theft",
-                                    "Arson",
-                                    "Burglary",
-                                    "Public Indecency",
-                                    "Other"
-                                ].map((v) => (
+                                {["Theft","Vandalism","Assault","Disturbance","Other"].map(v => (
                                     <label key={v} className="check">
                                         <input
                                             type="checkbox"
-                                            value={ v }
-                                            checked={ formData.incidentType.includes(v) }
-                                            onChange={ handleChange }
-                                            disabled={ readOnly }
+                                            value={v}
+                                            checked={formData.incidentType.includes(v)}
+                                            onChange={handleChange}
+                                            disabled={readOnly}
                                         />
-                                        <span>{ v }</span>
+                                        <span>{v}</span>
                                     </label>
                                 ))}
                             </div>
                         </div>
+
+                        {/* Description */}
                         <div className="field full">
                             <label htmlFor="description">Description of Incident *</label>
                             <textarea
@@ -372,6 +390,7 @@ function CreateReportTest({ report, onSave, onClose, readOnly }) {
                                 </button>
                             </div>
                         )}
+
                     </form>
                 </div>
             </div>
